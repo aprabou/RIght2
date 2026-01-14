@@ -431,7 +431,7 @@ const RecruitmentDashboard = () => {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       <MapPin size={16} className="inline mr-1" />
-                      Location <span className="text-xs text-gray-500 font-normal ml-1">| Hint: For US locations, search by state.</span>
+                      Location <span className="text-xs text-gray-500 font-normal ml-1">| Hint: For US locations, search by city/state.</span>
                     </label>
                     <input
                       type="text"
