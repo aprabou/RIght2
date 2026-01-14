@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Briefcase, User, ExternalLink, Loader2, RefreshCw, Users, Upload, Trash2, SlidersHorizontal, Calendar, MapPin, TrendingUp, Info, X } from 'lucide-react';
 import { ConnectionUploadModal } from './components/ConnectionUploadModal';
+import { ConnectionsModal } from './components/ConnectionsModal';
 import { connectionsStorage } from './utils/connectionsStorage';
 import { matchJobToConnections, JobConnectionMatch, clearMatchCache } from './utils/connectionMatcher';
 
@@ -31,6 +32,8 @@ const RecruitmentDashboard = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showConnectionsModal, setShowConnectionsModal] = useState(false);
+  const [selectedJobConnections, setSelectedJobConnections] = useState<{ connections: JobConnectionMatch[], company: string } | null>(null);
   const [hasConnections, setHasConnections] = useState(connectionsStorage.hasConnections());
   const [connectionCount, setConnectionCount] = useState(connectionsStorage.getConnections().length);
   const [sortBy, setSortBy] = useState<'connections' | 'date' | 'company'>('connections');
@@ -664,11 +667,17 @@ const RecruitmentDashboard = () => {
                               );
                             })}
                             {connectionMatches.length > 5 && (
-                              <div className="bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 flex items-center">
+                              <button
+                                onClick={() => {
+                                  setSelectedJobConnections({ connections: connectionMatches, company: job.company });
+                                  setShowConnectionsModal(true);
+                                }}
+                                className="bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5 flex items-center hover:bg-gray-100 hover:border-gray-300 transition-colors cursor-pointer"
+                              >
                                 <p className="text-xs text-gray-600 font-medium">
                                   +{connectionMatches.length - 5} more
                                 </p>
-                              </div>
+                              </button>
                             )}
                           </div>
                         </div>
@@ -803,6 +812,19 @@ const RecruitmentDashboard = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Connections Modal */}
+      {selectedJobConnections && (
+        <ConnectionsModal
+          isOpen={showConnectionsModal}
+          onClose={() => {
+            setShowConnectionsModal(false);
+            setSelectedJobConnections(null);
+          }}
+          connections={selectedJobConnections.connections}
+          companyName={selectedJobConnections.company}
+        />
       )}
     </div>
   );
