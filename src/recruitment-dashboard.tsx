@@ -304,7 +304,7 @@ const RecruitmentDashboard = () => {
               ) : (
                 <button
                   onClick={() => setShowUploadModal(true)}
-                  className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2.5 rounded-lg hover:bg-purple-700 transition-all shadow-sm font-medium text-sm"
+                  className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2.5 rounded-lg hover:bg-purple-700 transition-all shadow-sm font-medium text-sm animate-glow"
                 >
                   <Upload size={18} />
                   Import LinkedIn
