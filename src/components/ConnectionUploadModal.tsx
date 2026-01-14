@@ -138,7 +138,10 @@ export const ConnectionUploadModal: React.FC<ConnectionUploadModalProps> = ({
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h3 className="font-semibold text-blue-900 mb-2">How to export your LinkedIn connections:</h3>
             <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
-              <li>Go to LinkedIn Settings & Privacy</li>
+              <li>Go to <a href="https://www.linkedin.com/mypreferences/d/categories/account"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-indigo-600 hover:text-indigo-700 underline inline-flex items-center gap-1"> LinkedIn Settings & Privacy</a></li>
               <li>Click "Data privacy" → "Get a copy of your data"</li>
               <li>Select "Connections" only</li>
               <li>Request and download the CSV file</li>
