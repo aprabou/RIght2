@@ -782,7 +782,11 @@ const RecruitmentDashboard = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Feedback</h3>
                 <div className="space-y-2 text-gray-700">
                   <p>
-                    Notice any issues or want to see a new feature? Jump to the Right2 Repo and create an issue!
+                    Notice any issues or want to see a new feature? Check out the <a href="https://github.com/aprabou/RIght2" target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-indigo-600 hover:text-indigo-700 underline inline-flex items-center gap-1">
+                        Right2 Repo
+                      </a> on how to contribute.
                   </p>
                 </div>
               </div>
