@@ -689,6 +689,31 @@ const RecruitmentDashboard = () => {
             );
             })}
             </div>
+
+            {/* Bottom Pagination Controls */}
+            {sortedJobs.length > 0 && totalPages > 1 && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mt-4 flex items-center justify-center">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-sm text-gray-700 px-4">
+                    Page <span className="font-semibold">{currentPage}</span> of <span className="font-semibold">{totalPages}</span>
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
