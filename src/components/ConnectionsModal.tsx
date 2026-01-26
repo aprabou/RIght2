@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X, ExternalLink } from 'lucide-react';
+import FocusTrap from 'focus-trap-react';
 import { JobConnectionMatch } from '../utils/connectionMatcher';
 
 interface ConnectionsModalProps {
@@ -15,25 +16,67 @@ export const ConnectionsModal: React.FC<ConnectionsModalProps> = ({
   connections,
   companyName
 }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Connections at {companyName}</h2>
-            <p className="text-sm text-gray-600 mt-1">{connections.length} connection{connections.length !== 1 ? 's' : ''} found</p>
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="connections-modal-title"
+    >
+      <FocusTrap>
+        <div 
+          ref={modalRef}
+          className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <div>
+              <h2 id="connections-modal-title" className="text-xl font-bold text-gray-900">
+                Connections at {companyName}
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                {connections.length} connection{connections.length !== 1 ? 's' : ''} found
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Close modal"
+            >
+              <X size={24} />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="Close modal"
-          >
-            <X size={24} />
-          </button>
-        </div>
 
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto p-6">
@@ -88,6 +131,7 @@ export const ConnectionsModal: React.FC<ConnectionsModalProps> = ({
           </button>
         </div>
       </div>
+      </FocusTrap>
     </div>
   );
 };

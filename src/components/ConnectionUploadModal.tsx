@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Upload, X, AlertCircle, CheckCircle, Loader2, RefreshCw } from 'lucide-react';
+import FocusTrap from 'focus-trap-react';
 import { parseLinkedInCSV, validateCSVFile, parseFromCachedCSV } from '../utils/csvParser';
 import { connectionsStorage } from '../utils/connectionsStorage';
 
@@ -19,6 +20,33 @@ export const ConnectionUploadModal: React.FC<ConnectionUploadModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const hasCachedCSV = connectionsStorage.hasCachedCSV();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Handle escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen && !isProcessing) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, isProcessing, onClose]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -118,15 +146,29 @@ export const ConnectionUploadModal: React.FC<ConnectionUploadModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      onClick={() => !isProcessing && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="upload-modal-title"
+    >
+      <FocusTrap>
+        <div 
+          ref={modalRef}
+          className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900">Import LinkedIn Connections</h2>
+          <h2 id="upload-modal-title" className="text-2xl font-bold text-gray-900">
+            Import LinkedIn Connections
+          </h2>
           <button
             onClick={onClose}
             disabled={isProcessing}
             className="text-gray-400 hover:text-gray-600 disabled:opacity-50"
+            aria-label="Close modal"
           >
             <X size={24} />
           </button>
@@ -207,6 +249,7 @@ export const ConnectionUploadModal: React.FC<ConnectionUploadModalProps> = ({
                   <p className="text-sm text-gray-500 mb-4">or</p>
                   <label className="inline-block">
                     <input
+                      ref={fileInputRef}
                       type="file"
                       accept=".csv"
                       onChange={handleFileInput}
@@ -257,6 +300,7 @@ export const ConnectionUploadModal: React.FC<ConnectionUploadModalProps> = ({
           </button>
         </div>
       </div>
+      </FocusTrap>
     </div>
   );
 };

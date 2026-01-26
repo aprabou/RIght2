@@ -35,7 +35,10 @@ const buildCompanyLookup = (): Map<string, UserConnection[]> => {
     if (!lookup.has(normalized)) {
       lookup.set(normalized, []);
     }
-    lookup.get(normalized)!.push(connection);
+    const list = lookup.get(normalized);
+    if (list) {
+      list.push(connection);
+    }
   }
   
   companyLookupCache = lookup;
@@ -54,8 +57,9 @@ export const clearMatchCache = () => {
 export const matchJobToConnections = (job: Job): JobConnectionMatch[] => {
   // Check cache first
   const cacheKey = `${job.company}|${job.role}`;
-  if (matchCache.has(cacheKey)) {
-    return matchCache.get(cacheKey)!;
+  const cachedResult = matchCache.get(cacheKey);
+  if (cachedResult) {
+    return cachedResult;
   }
 
   const companyLookup = buildCompanyLookup();
@@ -188,7 +192,10 @@ export const getConnectionsByCompany = (): Map<string, UserConnection[]> => {
     if (!grouped.has(company)) {
       grouped.set(company, []);
     }
-    grouped.get(company)!.push(connection);
+    const list = grouped.get(company);
+    if (list) {
+      list.push(connection);
+    }
   }
 
   return grouped;
